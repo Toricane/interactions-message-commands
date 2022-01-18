@@ -15,7 +15,7 @@ import interactions
 from interactions.ext.message_commands import MessageCommands, MessageContext
 
 bot = interactions.Client(
-    token="ODc0NzgwOTE4MDgxMDE1ODg5.YRL9Nw.Mm5m0gbQWkaaaj-e-U-T4pV4PlQ"
+    token="token here"
 )
 cmd = MessageCommands(bot, "!")
 
