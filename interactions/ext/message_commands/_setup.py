@@ -2,6 +2,7 @@ from interactions import Client
 from .message_commands2 import message, logic, process
 from types import MethodType
 from typing import Sequence, Union
+from __future__ import annotations
 
 
 def setup(bot: Client, prefix: Union[Sequence[str], str]) -> None:
