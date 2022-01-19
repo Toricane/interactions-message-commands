@@ -16,4 +16,4 @@ def setup(bot: Client, prefix: Union[Sequence[str], str]) -> None:
     bot.prefix = prefix
     bot.__commands__ = {}
 
-    bot.event(process, "on_message_create")
+    bot.event(bot.process, "on_message_create")
