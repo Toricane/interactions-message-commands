@@ -2,9 +2,9 @@ import functools
 from inspect import _empty, signature
 from interactions import Client
 from shlex import split
-from typing import List, Set, Tuple, Union
+from typing import List, Set, Tuple, Union, Sequence
 
-from .errors import MissingRequiredArgument
+from .errors import MissingRequiredArgument, DuplicateAlias, DuplicateName
 from .context import MessageContext
 
 
@@ -34,9 +34,7 @@ class CommandParameter:
 class MessageCommands:
     """The base class for commands"""
 
-    def __init__(
-        self, bot: Client, prefix: Union[List[str], Tuple[str], Set[str]]
-    ) -> None:
+    def __init__(self, bot: Client, prefix: Union[Sequence[str], str]) -> None:
         """
         :param Client bot: The client to use
         :param str prefix: The prefix to use for commands
@@ -47,7 +45,7 @@ class MessageCommands:
         """
         self.bot = bot
         self.prefix = prefix
-        self.commands: dict = {}
+        self.__commands__: dict = {}
 
         self.bot.event(self.process, "on_message_create")
 
@@ -78,7 +76,7 @@ class MessageCommands:
             content[0] = content[0][len(prefix) :]
 
         # check if the command exists
-        if all(content[0] != key for key in self.commands):
+        if all(content[0] != key for key in self.__commands__):
             return
 
         # get required data for MessageContext
@@ -100,7 +98,7 @@ class MessageCommands:
             guild=guild,
         )
 
-        func = self.commands[content[0]]  # get the corresponding function
+        func = self.__commands__[content[0]]  # get the corresponding function
 
         # get the saved parameters of the function
         params = func.__params__
@@ -153,11 +151,12 @@ class MessageCommands:
         # call the function
         return await func(ctx, *(ctx.args + ctx._args), **ctx.kwargs)
 
-    def message(self, **kwargs):
+    def message(self, _name: str = None, *, aliases: Sequence[str] = None) -> callable:
         """
         Decorator for creating a message-based command
 
-        :param str name: The name of the command
+        :param str _name: The name of the command
+        :param Sequence[str] aliases: The aliases of the command
 
         ```py
         cmd = MessageCommands(bot, "!")
@@ -170,7 +169,7 @@ class MessageCommands:
 
         def inner(func):
             # get name
-            command_name = kwargs.get("name") or func.__name__
+            command_name = _name or func.__name__
 
             # ignore self, ctx parameters
             if "." in func.__qualname__:  # is part of a class
@@ -198,8 +197,18 @@ class MessageCommands:
             func.__params__ = params
             func.__cmd_params__ = cmd_params
 
-            # add the function to the commands dict
-            self.commands[command_name] = func
+            # add the function to the commands dict if it doesn't exist
+            if command_name in self.__commands__:
+                raise DuplicateName(command_name)
+            self.__commands__[command_name] = func
+
+            # add any aliases if they are specified and are not in the commands dict
+            if aliases is not None:
+                for alias in aliases:
+                    if alias in self.__commands__:
+                        raise DuplicateAlias(alias)
+                    self.__commands__[alias] = func
+
             return func
 
         return inner
