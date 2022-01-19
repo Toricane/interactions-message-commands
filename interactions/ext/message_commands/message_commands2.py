@@ -136,11 +136,11 @@ async def logic(self, msg, prefix=None):
     return await func(ctx, *(ctx.args + ctx._args), **ctx.kwargs)
 
 
-def message(self, _name: str = None, *, aliases: Sequence[str] = None) -> callable:
+def message(self, name: str = None, *, aliases: Sequence[str] = None) -> callable:
     """
     Decorator for creating a message-based command
 
-    :param str _name: The name of the command
+    :param str name: The name of the command
     :param Sequence[str] aliases: The aliases of the command
 
     ```py
@@ -152,7 +152,7 @@ def message(self, _name: str = None, *, aliases: Sequence[str] = None) -> callab
 
     def inner(func):
         # get name
-        command_name = _name or func.__name__
+        command_name = name or func.__name__
 
         # ignore self, ctx parameters
         if "." in func.__qualname__:  # is part of a class
@@ -165,9 +165,9 @@ def message(self, _name: str = None, *, aliases: Sequence[str] = None) -> callab
 
         # organize parameters
         cmd_params = []
-        for name, param in params.items():
+        for _name, param in params.items():
             cmd_param = CommandParameter(
-                name=name,
+                name=_name,
                 type=param.annotation,
                 variable=param,
                 optional=param.default is not _empty,
