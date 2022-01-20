@@ -14,7 +14,7 @@ class MessageCommands(Extension):
     def __init__(self, bot: Client, prefix: Optional[Union[Sequence[str], str]] = None):
         self.bot = bot
         self.prefix = prefix
-        self.message_commands = {}
+        self.bot.message_commands = {}
 
         self.bot.event(self.process, "on_message_create")
 
@@ -50,7 +50,7 @@ class MessageCommands(Extension):
             content[0] = content[0][len(prefix) :]
 
         # check if the command exists
-        if all(content[0] != key for key in self.message_commands):
+        if all(content[0] != key for key in self.bot.message_commands):
             return
 
         # get required data for MessageContext
@@ -72,7 +72,7 @@ class MessageCommands(Extension):
             guild=guild,
         )
 
-        func = self.message_commands[content[0]]  # get the corresponding function
+        func = self.bot.message_commands[content[0]]  # get the corresponding function
 
         # get the saved parameters of the function
         params = func.__params__
