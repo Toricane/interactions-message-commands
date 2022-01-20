@@ -16,7 +16,7 @@ class MessageCommands(Extension):
         self.prefix = prefix
         self.__commands__ = {}
 
-        self.event(self.process, "on_message_create")
+        self.bot.event(self.process, "on_message_create")
 
     async def process(self, msg) -> None:
         """Processes a message and runs the corresponding command if it matches the prefix"""
