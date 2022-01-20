@@ -57,14 +57,14 @@ class MessageCommands(Extension):
         message = msg._json
         member = msg.member._json
         user = msg.author._json
-        channel = await self.http.get_channel(msg.channel_id)
-        guild = await self.http.get_guild(msg.guild_id)
+        channel = await self.bot.http.get_channel(msg.channel_id)
+        guild = await self.bot.http.get_guild(msg.guild_id)
 
         for i in [message, member, user, channel, guild]:
             i.pop("_client", None)
 
         ctx = MessageContext(
-            self.http,
+            self.bot.http,
             message=message,
             member=member,
             user=user,
