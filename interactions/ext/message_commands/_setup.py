@@ -6,9 +6,9 @@ from types import MethodType
 
 
 def setup(bot: Client) -> None:
-    MessageCommands(bot)
+    mc = MessageCommands(bot)
     bot.message = MethodType(message, bot)
     bot.when_mentioned = MethodType(when_mentioned, bot)
     bot.when_mentioned_or = MethodType(when_mentioned_or, bot)
 
-    bot.event(bot.process, "on_message_create")
+    bot.event(mc.process, "on_message_create")
