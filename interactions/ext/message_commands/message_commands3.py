@@ -130,6 +130,6 @@ class MessageCommands(Extension):
 
         # call the function
         if func.__is_method__:
-            return await func(func.__self__, ctx, *(ctx.args + ctx._args), **ctx.kwargs)
+            return await func(ctx, *(ctx.args + ctx._args), **ctx.kwargs)
         else:
             return await func(ctx, *(ctx.args + ctx._args), **ctx.kwargs)
