@@ -75,7 +75,6 @@ class MessageCommands(Extension):
         func: callable = self.bot.message_commands[
             content[0]
         ]  # get the corresponding function
-        print(type(func))
 
         # get the saved parameters of the function
         params = func.__params__
@@ -131,6 +130,6 @@ class MessageCommands(Extension):
 
         # call the function
         if func.__is_method__:
-            return await func(ctx, *(ctx.args + ctx._args), **ctx.kwargs)
+            return await func(func.__self__, ctx, *(ctx.args + ctx._args), **ctx.kwargs)
         else:
             return await func(ctx, *(ctx.args + ctx._args), **ctx.kwargs)
