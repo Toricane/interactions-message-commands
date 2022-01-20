@@ -14,7 +14,7 @@ class MessageCommands(Extension):
     def __init__(self, bot: Client, prefix: Optional[Union[Sequence[str], str]] = None):
         self.bot = bot
         self.prefix = prefix
-        self.__commands__ = {}
+        self.message_commands = {}
 
         self.bot.event(self.process, "on_message_create")
 

@@ -11,4 +11,3 @@ def setup(bot: Client) -> None:
     bot.when_mentioned = MethodType(when_mentioned, bot)
     bot.when_mentioned_or = MethodType(when_mentioned_or, bot)
 
-    bot.event(mc.process, "on_message_create")
