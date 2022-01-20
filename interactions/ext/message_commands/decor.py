@@ -46,10 +46,10 @@ def message(self, name: str = None, *, aliases: Sequence[str] = None) -> callabl
     """
 
     def inner(func):
-        print(dir(func))
-        # only sets attribute if not set
-        if not hasattr(func, "__message_command__"):
-            func.__message_command__ = True
+        # gets func if it is a method
+        if hasattr(func, "__func__"):
+            func = func.__func__
+        func.__message_command__ = True
 
         # get name
         command_name = name or func.__name__
