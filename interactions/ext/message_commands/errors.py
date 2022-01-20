@@ -21,3 +21,12 @@ class DuplicateAlias(MessageCommandError):
 
     def __init__(self, alias):
         super().__init__(f"Duplicate alias: {alias}")
+
+
+class NoPrefixProvided(MessageCommandError):
+    """No prefix provided"""
+
+    def __init__(self):
+        super().__init__(
+            "No prefix provided! After loading the extension, you must provide a prefix with `bot.prefix = <prefix here>`."
+        )
