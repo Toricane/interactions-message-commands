@@ -1,5 +1,6 @@
 from interactions import Client
-from .message_commands3 import MessageCommands, message
+from .message_commands3 import MessageCommands
+from .decor import message
 from .prefixes import when_mentioned, when_mentioned_or
 from types import MethodType
 
