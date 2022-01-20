@@ -2,7 +2,7 @@ from asyncio import iscoroutinefunction
 from inspect import getmembers
 import interactions
 from interactions import Client, Extension
-from .message_commands3 import message
+from .decor import message
 
 
 class Extension(Extension):
