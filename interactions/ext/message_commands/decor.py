@@ -47,11 +47,11 @@ def message(self, name: str = None, *, aliases: Sequence[str] = None) -> callabl
 
     def inner(func):
         # gets func if it is a method
-        func.__is_method__ = ismethod(
-            func.__func__ if hasattr(func, "__func__") else func
-        )
-        if func.__is_method__:
+        if ismethod(func.__func__ if hasattr(func, "__func__") else func):
             func = func.__func__
+            func.__is_method__ = True
+        else:
+            func.__is_method__ = False
         func.__message_command__ = True
 
         # get name
