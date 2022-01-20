@@ -13,7 +13,7 @@ from .context import MessageContext
 class MessageCommands(Extension):
     def __init__(self, bot: Client, prefix: Optional[Union[Sequence[str], str]] = None):
         self.bot = bot
-        self.prefix = prefix
+        self.bot.prefix = prefix
         self.bot.message_commands = {}
 
         self.bot.event(self.process, "on_message_create")
@@ -21,7 +21,7 @@ class MessageCommands(Extension):
     async def process(self, msg) -> None:
         """Processes a message and runs the corresponding command if it matches the prefix"""
         # if no prefix, error
-        if not self.prefix:
+        if not self.bot.prefix:
             raise NoPrefixProvided
 
         # if message is from a bot, ignore it
@@ -29,17 +29,17 @@ class MessageCommands(Extension):
             return
 
         # see if the message starts with the prefix, and execute self.logic()
-        if isinstance(self.prefix, str) and msg.content.startswith(self.prefix):
+        if isinstance(self.bot.prefix, str) and msg.content.startswith(self.bot.prefix):
             await self.logic(msg)
-        elif isinstance(self.prefix, (tuple, list, set)):
-            for prefix in self.prefix:
+        elif isinstance(self.bot.prefix, (tuple, list, set)):
+            for prefix in self.bot.prefix:
                 if msg.content.startswith(prefix):
                     return await self.logic(msg, prefix)
 
     async def logic(self, msg, prefix=None):
         """The logic for finding and running a command"""
         prefix: Union[List[str], Tuple[str], Set[str]] = (
-            self.prefix if prefix is None else prefix
+            self.bot.prefix if prefix is None else prefix
         )  # sets up the prefix
         content: List[str] = split(msg.content)  # splits the message into arguments
 
