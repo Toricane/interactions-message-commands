@@ -1,5 +1,6 @@
 from asyncio import iscoroutinefunction
 from inspect import getmembers
+import interactions
 from interactions import Client, Extension
 from .message_commands3 import message
 
@@ -21,7 +22,11 @@ class Extension(Extension):
     def teardown(self):
         super().teardown()
         for name, func in getmembers(self, predicate=iscoroutinefunction):
-            if name in self.client.message_commands and hasattr(
-                func, "__message_command__"
+            if (
+                hasattr(func, "__message_command__")
+                and name in self.client.message_commands
             ):
                 del self.client.message_commands[name]
+
+
+interactions.Extension = Extension
