@@ -15,7 +15,7 @@ class Extension(Extension):
             if hasattr(func, "__message_command__"):
                 # register it using the decorator
                 name, aliases = func.__message_command_data__
-                message(self.bot, name, aliases=aliases)(func)
+                message(client, name, aliases=aliases)(func)
 
         return self
 

@@ -6,7 +6,7 @@ from types import MethodType
 
 
 def setup(bot: Client) -> None:
-    mc = MessageCommands(bot)
+    MessageCommands(bot)
     bot.message = MethodType(message, bot)
     bot.when_mentioned = MethodType(when_mentioned, bot)
     bot.when_mentioned_or = MethodType(when_mentioned_or, bot)
