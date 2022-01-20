@@ -100,6 +100,8 @@ def extension_message(name: str = None, *, aliases: Sequence[str] = None) -> cal
     def inner(func):
         func.__message_command__ = True
         func.__message_command_data__ = (name, aliases)
+        func.__params__ = None
+        func.__cmd_params__ = None
         return func
 
     return inner
