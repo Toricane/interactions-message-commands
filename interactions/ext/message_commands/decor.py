@@ -1,5 +1,5 @@
 import functools
-from inspect import _empty, signature
+from inspect import _empty, signature, ismethod
 from typing import Sequence
 
 from .errors import (
@@ -47,7 +47,8 @@ def message(self, name: str = None, *, aliases: Sequence[str] = None) -> callabl
 
     def inner(func):
         # gets func if it is a method
-        if hasattr(func, "__func__"):
+        func.__is_method__ = ismethod(func)
+        if func.__is_method__:
             func = func.__func__
         func.__message_command__ = True
 
@@ -103,6 +104,7 @@ def extension_message(name: str = None, *, aliases: Sequence[str] = None) -> cal
         func.__message_command_data__ = (name, aliases)
         func.__params__ = None
         func.__cmd_params__ = None
+        func.__is_method__ = ismethod(func)
         return func
 
     return inner

@@ -1,4 +1,4 @@
-from inspect import _empty
+from inspect import _empty, ismethod
 from interactions import Client, Extension
 from shlex import split
 from typing import List, Optional, Set, Tuple, Union, Sequence
@@ -72,7 +72,9 @@ class MessageCommands(Extension):
             guild=guild,
         )
 
-        func = self.bot.message_commands[content[0]]  # get the corresponding function
+        func: callable = self.bot.message_commands[
+            content[0]
+        ]  # get the corresponding function
 
         # get the saved parameters of the function
         params = func.__params__
@@ -99,6 +101,8 @@ class MessageCommands(Extension):
             for _, param in params.items()
             if param.kind in {param.POSITIONAL_ONLY, param.POSITIONAL_OR_KEYWORD}
         ]
+        if func.__is_method__:
+            required_params.pop(0)
 
         # raises if there are not enough parameters
         if len(required_params) > len(needed_params):
@@ -110,6 +114,8 @@ class MessageCommands(Extension):
             if arg.variable.kind
             in {arg.variable.POSITIONAL_OR_KEYWORD, arg.variable.POSITIONAL_ONLY}
         ]
+        if func.__is_method__:
+            ctx.args.pop(0)
         ctx.kwargs = {  # keyword arguments for the function
             kwarg.name: kwarg.input
             for kwarg in cmd_params
@@ -123,4 +129,8 @@ class MessageCommands(Extension):
         ctx.all_kwargs = needed_params  # all arguments as keyword arguments
 
         # call the function
-        return await func(ctx, *(ctx.args + ctx._args), **ctx.kwargs)
+        if func.__is_method__:
+            print(dir(func))
+            # return await func(ctx, *(ctx.args + ctx._args), **ctx.kwargs)
+        else:
+            return await func(ctx, *(ctx.args + ctx._args), **ctx.kwargs)
