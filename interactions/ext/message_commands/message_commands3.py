@@ -75,6 +75,7 @@ class MessageCommands(Extension):
         func: callable = self.bot.message_commands[
             content[0]
         ]  # get the corresponding function
+        print(type(func))
 
         # get the saved parameters of the function
         params = func.__params__
