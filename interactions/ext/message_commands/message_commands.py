@@ -73,7 +73,7 @@ class MessageCommands(Extension):
         context: Optional[MessageContext] = None,
     ) -> None:
         """The logic for finding and running a command"""
-        print("logic")
+        print("logic", context)
         prefix: Union[List[str], Tuple[str], Set[str]] = self.bot.prefix
         content: List[str] = split(msg.content)  # splits the message into arguments
 
@@ -89,6 +89,7 @@ class MessageCommands(Extension):
 
         # get required data for MessageContext
         if not context:
+            print("no context")
             message = msg._json
             member = msg.member._json
             user = msg.author._json
@@ -109,6 +110,7 @@ class MessageCommands(Extension):
                 guild=guild,
             )
         else:
+            print("yes context")
             ctx = context
 
         func: callable = self.bot.message_commands[
