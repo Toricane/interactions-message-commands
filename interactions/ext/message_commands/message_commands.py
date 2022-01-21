@@ -103,13 +103,14 @@ class MessageCommands(Extension):
             user = msg.author._json
             print(self.bot.http.cache.channels.get(str(msg.channel_id)) or [])
             print(self.bot.http.cache.guilds.get(str(msg.guild_id)) or [])
-            channel = self.bot.http.cache.channels.get(
-                str(msg.channel_id)
-            )._json or await self.bot.http.get_channel(msg.channel_id)
-
-            guild = self.bot.http.cache.guilds.get(
-                str(msg.guild_id)
-            )._json or await self.bot.http.get_guild(msg.guild_id)
+            channel = (
+                self.bot.http.cache.channels.get(str(msg.channel_id))
+                or await self.bot.http.get_channel(msg.channel_id)
+            )._json
+            guild = (
+                self.bot.http.cache.guilds.get(str(msg.guild_id))
+                or await self.bot.http.get_guild(msg.guild_id)
+            )._json
 
             for i in [message, member, user, channel, guild]:
                 i.pop("_client", None)
