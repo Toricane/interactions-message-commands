@@ -101,8 +101,16 @@ class MessageCommands(Extension):
             message = msg._json
             member = msg.member._json
             user = msg.author._json
-            print(self.bot.http.cache.channels.view)
-            print(self.bot.http.cache.guilds.view)
+            print(
+                self.bot.http.cache.channels.get(msg.channel_id).value
+                if self.bot.http.cache.channels.get(msg.channel_id)
+                else []
+            )
+            print(
+                self.bot.http.cache.guilds.get(msg.guild_id).value
+                if self.bot.http.cache.channels.get(msg.guild_id)
+                else []
+            )
             channel = await self.bot.http.get_channel(msg.channel_id)
             guild = await self.bot.http.get_guild(msg.guild_id)
 
