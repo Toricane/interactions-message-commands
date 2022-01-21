@@ -70,12 +70,12 @@ class MessageCommands(Extension):
     async def logic(
         self,
         msg,
-        prefix: Optional[Union[Sequence[str], str]],
+        prefix: Union[Sequence[str], str],
         context: Optional[MessageContext] = None,
     ) -> None:
         """The logic for finding and running a command"""
         print("logic", context)
-        prefix: Union[List[str], Tuple[str], Set[str]] = self.bot.prefix
+        prefix: Union[List[str], Tuple[str], Set[str]] = prefix
         print("prefix", prefix)
         content: List[str] = split(msg.content)  # splits the message into arguments
         print("before", content)
