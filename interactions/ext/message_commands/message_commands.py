@@ -76,6 +76,7 @@ class MessageCommands(Extension):
         print("logic", context)
         prefix: Union[List[str], Tuple[str], Set[str]] = self.bot.prefix
         content: List[str] = split(msg.content)  # splits the message into arguments
+        print("before", content)
 
         # check if it is a mention prefix or a prefix with spaces and uncuts the first argument
         if content[0] == prefix:
