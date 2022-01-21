@@ -82,9 +82,11 @@ class MessageCommands(Extension):
             content.pop(0)
         else:
             content[0] = content[0][len(prefix) :]
+        print(content)
 
         # check if the command exists
         if all(content[0] != key for key in self.bot.message_commands):
+            print("does not exist")
             return
 
         # get required data for MessageContext
