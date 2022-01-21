@@ -1,4 +1,4 @@
-from interactions import Channel, Context, Guild
+from interactions import Channel, Context, Guild, Message
 from typing import Optional
 
 
@@ -22,7 +22,7 @@ class MessageContext(Context):
         embeds=None,
         allowed_mentions=None,
         components=None,
-    ):
+    ) -> Message:
         """
         Sends a message in the channel
 
@@ -46,6 +46,7 @@ class MessageContext(Context):
         return await self.channel.send(
             content,
             tts=tts,
+            # attachments=attachments,
             embeds=embeds,
             allowed_mentions=allowed_mentions,
             components=components,

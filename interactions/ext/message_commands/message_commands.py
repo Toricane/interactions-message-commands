@@ -18,6 +18,7 @@ class MessageCommands(Extension):
         prefix: Optional[Union[Sequence[str], str, Coroutine]] = None
         self.bot.prefix = prefix
 
+        # set up an event that checks for message commands
         self.bot.event(self.process, "on_message_create")
 
     async def process(self, msg) -> None:
@@ -26,10 +27,12 @@ class MessageCommands(Extension):
         if not self.bot.prefix:
             raise NoPrefixProvided
 
+        # if the prefix is a coroutine, run it
         if iscoroutinefunction(self.bot.prefix):
             message = msg._json
             member = msg.member._json
             user = msg.author._json
+            # get from cache if possible
             channel = self.bot.http.cache.channels.get(
                 str(msg.channel_id)
             ) or await self.bot.http.get_channel(msg.channel_id)
@@ -64,7 +67,7 @@ class MessageCommands(Extension):
 
         # see if the message starts with the prefix, and execute self.logic()
         if isinstance(self.bot.prefix, str) and msg.content.startswith(self.bot.prefix):
-            await self.logic(msg, self.bot.prefix)
+            return await self.logic(msg, self.bot.prefix)
         elif isinstance(self.bot.prefix, (tuple, list, set)):
             for prefix in self.bot.prefix:
                 if msg.content.startswith(prefix):
@@ -94,6 +97,7 @@ class MessageCommands(Extension):
             message = msg._json
             member = msg.member._json
             user = msg.author._json
+            # get from cache if possible
             channel = self.bot.http.cache.channels.get(
                 str(msg.channel_id)
             ) or await self.bot.http.get_channel(msg.channel_id)
