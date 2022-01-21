@@ -75,6 +75,7 @@ class MessageCommands(Extension):
         """The logic for finding and running a command"""
         print("logic", context)
         prefix: Union[List[str], Tuple[str], Set[str]] = self.bot.prefix
+        print("prefix", prefix)
         content: List[str] = split(msg.content)  # splits the message into arguments
         print("before", content)
 
