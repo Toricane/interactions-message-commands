@@ -1,4 +1,4 @@
-from inspect import _empty, ismethod
+from inspect import _empty
 from interactions import Client, Extension
 from shlex import split
 from typing import List, Optional, Set, Tuple, Union, Sequence
