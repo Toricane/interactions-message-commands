@@ -82,8 +82,10 @@ class MessageCommands(Extension):
 
         # check if it is a mention prefix or a prefix with spaces and uncuts the first argument
         if content[0] == prefix:
+            print("if")
             content.pop(0)
         else:
+            print("else", len(prefix))
             content[0] = content[0][len(prefix) :]
         print(content)
 
