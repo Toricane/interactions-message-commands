@@ -22,13 +22,11 @@ class MessageCommands(Extension):
 
     async def process(self, msg) -> None:
         """Processes a message and runs the corresponding command if it matches the prefix"""
-        print("process")
         # if no prefix, error
         if not self.bot.prefix:
             raise NoPrefixProvided
 
         if iscoroutinefunction(self.bot.prefix):
-            print("coroutine?")
             message = msg._json
             member = msg.member._json
             user = msg.author._json
@@ -64,7 +62,6 @@ class MessageCommands(Extension):
         elif isinstance(self.bot.prefix, (tuple, list, set)):
             for prefix in self.bot.prefix:
                 if msg.content.startswith(prefix):
-                    print("prefix", prefix)
                     return await self.logic(msg, prefix)
 
     async def logic(
@@ -74,35 +71,24 @@ class MessageCommands(Extension):
         context: Optional[MessageContext] = None,
     ) -> None:
         """The logic for finding and running a command"""
-        print("logic", context)
         prefix: Union[List[str], Tuple[str], Set[str]] = prefix
-        print("prefix", prefix)
         content: List[str] = split(msg.content)  # splits the message into arguments
-        print("before", content)
 
         # check if it is a mention prefix or a prefix with spaces and uncuts the first argument
         if content[0] == prefix:
-            print("if")
             content.pop(0)
         else:
-            print("else", len(prefix))
             content[0] = content[0][len(prefix) :]
-        print(content)
 
         # check if the command exists
         if all(content[0] != key for key in self.bot.message_commands):
-            print("self.bot.message_commands", self.bot.message_commands)
-            print("does not exist")
             return
 
         # get required data for MessageContext
         if not context:
-            print("no context")
             message = msg._json
             member = msg.member._json
             user = msg.author._json
-            print(self.bot.http.cache.channels.get(str(msg.channel_id)) or [])
-            print(self.bot.http.cache.guilds.get(str(msg.guild_id)) or [])
             channel = self.bot.http.cache.channels.get(
                 str(msg.channel_id)
             ) or await self.bot.http.get_channel(msg.channel_id)
@@ -124,7 +110,6 @@ class MessageCommands(Extension):
                 guild=guild,
             )
         else:
-            print("yes context")
             ctx = context
 
         func: callable = self.bot.message_commands[
