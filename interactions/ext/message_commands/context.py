@@ -1,4 +1,4 @@
-from interactions import Channel, Context
+from interactions import Channel, Context, Guild
 from typing import Optional
 
 
@@ -10,6 +10,8 @@ class MessageContext(Context):
         self._client = _client
         self.channel._json["_client"] = _client
         self.channel = Channel(**self.channel._json)
+        self.guild._json["_client"] = _client
+        self.guild = Guild(**self.guild._json)
 
     async def send(
         self,
