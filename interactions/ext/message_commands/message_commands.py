@@ -1,7 +1,7 @@
-from inspect import _empty
+from inspect import _empty, iscoroutinefunction
 from interactions import Client, Extension
 from shlex import split
-from typing import List, Optional, Set, Tuple, Union, Sequence
+from typing import List, Optional, Set, Tuple, Union, Sequence, Coroutine
 
 from .errors import (
     MissingRequiredArgument,
@@ -11,10 +11,12 @@ from .context import MessageContext
 
 
 class MessageCommands(Extension):
-    def __init__(self, bot: Client, prefix: Optional[Union[Sequence[str], str]] = None):
+    def __init__(self, bot: Client):
         self.bot = bot
-        self.bot.prefix = prefix
         self.bot.message_commands = {}
+
+        prefix: Optional[Union[Sequence[str], str, Coroutine]] = None
+        self.bot.prefix = prefix
 
         self.bot.event(self.process, "on_message_create")
 
@@ -24,23 +26,50 @@ class MessageCommands(Extension):
         if not self.bot.prefix:
             raise NoPrefixProvided
 
+        if iscoroutinefunction(self.bot.prefix):
+            message = msg._json
+            member = msg.member._json
+            user = msg.author._json
+            channel = await self.bot.http.get_channel(msg.channel_id)
+            guild = await self.bot.http.get_guild(msg.guild_id)
+
+            for i in [message, member, user, channel, guild]:
+                i.pop("_client", None)
+
+            ctx = MessageContext(
+                self.bot.http,
+                message=message,
+                member=member,
+                user=user,
+                channel=channel,
+                guild=guild,
+            )
+
+            prefix = await self.bot.prefix(ctx)
+
+            if msg.content.startswith(prefix):
+                await self.logic(msg, prefix, context=ctx)
+
         # if message is from a bot, ignore it
         if msg.author.bot:
             return
 
         # see if the message starts with the prefix, and execute self.logic()
         if isinstance(self.bot.prefix, str) and msg.content.startswith(self.bot.prefix):
-            await self.logic(msg)
+            await self.logic(msg, self.bot.prefix)
         elif isinstance(self.bot.prefix, (tuple, list, set)):
             for prefix in self.bot.prefix:
                 if msg.content.startswith(prefix):
                     return await self.logic(msg, prefix)
 
-    async def logic(self, msg, prefix=None):
+    async def logic(
+        self,
+        msg,
+        prefix: Optional[Union[Sequence[str], str]],
+        context: Optional[MessageContext] = None,
+    ) -> None:
         """The logic for finding and running a command"""
-        prefix: Union[List[str], Tuple[str], Set[str]] = (
-            self.bot.prefix if prefix is None else prefix
-        )  # sets up the prefix
+        prefix: Union[List[str], Tuple[str], Set[str]] = self.bot.prefix
         content: List[str] = split(msg.content)  # splits the message into arguments
 
         # check if it is a mention prefix or a prefix with spaces and uncuts the first argument
@@ -54,23 +83,28 @@ class MessageCommands(Extension):
             return
 
         # get required data for MessageContext
-        message = msg._json
-        member = msg.member._json
-        user = msg.author._json
-        channel = await self.bot.http.get_channel(msg.channel_id)
-        guild = await self.bot.http.get_guild(msg.guild_id)
+        if not context:
+            message = msg._json
+            member = msg.member._json
+            user = msg.author._json
+            print(self.bot.http.cache.channels)
+            print(self.bot.http.cache.guilds)
+            channel = await self.bot.http.get_channel(msg.channel_id)
+            guild = await self.bot.http.get_guild(msg.guild_id)
 
-        for i in [message, member, user, channel, guild]:
-            i.pop("_client", None)
+            for i in [message, member, user, channel, guild]:
+                i.pop("_client", None)
 
-        ctx = MessageContext(
-            self.bot.http,
-            message=message,
-            member=member,
-            user=user,
-            channel=channel,
-            guild=guild,
-        )
+            ctx = MessageContext(
+                self.bot.http,
+                message=message,
+                member=member,
+                user=user,
+                channel=channel,
+                guild=guild,
+            )
+        else:
+            ctx = context
 
         func: callable = self.bot.message_commands[
             content[0]
