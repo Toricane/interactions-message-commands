@@ -22,11 +22,13 @@ class MessageCommands(Extension):
 
     async def process(self, msg) -> None:
         """Processes a message and runs the corresponding command if it matches the prefix"""
+        print("process")
         # if no prefix, error
         if not self.bot.prefix:
             raise NoPrefixProvided
 
         if iscoroutinefunction(self.bot.prefix):
+            print("coroutine?")
             message = msg._json
             member = msg.member._json
             user = msg.author._json
@@ -71,6 +73,7 @@ class MessageCommands(Extension):
         context: Optional[MessageContext] = None,
     ) -> None:
         """The logic for finding and running a command"""
+        print("logic")
         prefix: Union[List[str], Tuple[str], Set[str]] = self.bot.prefix
         content: List[str] = split(msg.content)  # splits the message into arguments
 
