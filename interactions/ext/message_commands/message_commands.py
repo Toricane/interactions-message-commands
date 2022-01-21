@@ -50,6 +50,8 @@ class MessageCommands(Extension):
             if msg.content.startswith(prefix):
                 await self.logic(msg, prefix, context=ctx)
 
+            return
+
         # if message is from a bot, ignore it
         if msg.author.bot:
             return
