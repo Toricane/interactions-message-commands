@@ -30,8 +30,14 @@ class MessageCommands(Extension):
             message = msg._json
             member = msg.member._json
             user = msg.author._json
-            channel = await self.bot.http.get_channel(msg.channel_id)
-            guild = await self.bot.http.get_guild(msg.guild_id)
+            channel = self.bot.http.cache.channels.get(
+                str(msg.channel_id)
+            ) or await self.bot.http.get_channel(msg.channel_id)
+            channel = channel if isinstance(channel, dict) else channel._json
+            guild = self.bot.http.cache.guilds.get(
+                str(msg.guild_id)
+            ) or await self.bot.http.get_guild(msg.guild_id)
+            guild = guild if isinstance(guild, dict) else guild._json
 
             for i in [message, member, user, channel, guild]:
                 i.pop("_client", None)
@@ -71,7 +77,6 @@ class MessageCommands(Extension):
         context: Optional[MessageContext] = None,
     ) -> None:
         """The logic for finding and running a command"""
-        prefix: Union[List[str], Tuple[str], Set[str]] = prefix
         content: List[str] = split(msg.content)  # splits the message into arguments
 
         # check if it is a mention prefix or a prefix with spaces and uncuts the first argument
