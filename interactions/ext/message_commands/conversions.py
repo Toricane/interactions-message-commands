@@ -26,7 +26,7 @@ def to_int(self):
                 self.input = int(float(self.input))
             except ValueError:
                 return False
-        return True
+    return True
 
 
 def to_float(self):
@@ -41,7 +41,7 @@ def to_float(self):
             self.input = float(self.input)
         except ValueError:
             return False
-        return True
+    return True
 
 
 def resolve_basic_typehint(self, _type=None) -> bool:
@@ -83,10 +83,12 @@ def resolve_union(self, _type=None):
     if not args:
         return False
     self.input = split(self.input) if len(split(self.input)) > 1 else list(self.input)
+    print(self.input)
     for arg in args:
         if get_origin(arg) is List and any(
             resolve_list(self, a) for a in get_args(arg)
         ):
+            print("yes")
             return True
         resolved = resolve_basic_typehint(self, arg)
         if resolved:
