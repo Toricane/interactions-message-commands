@@ -86,9 +86,7 @@ def resolve_union(self, _type=None):
     print("input", self.input)
     print("args", args)
     for arg in args:
-        if get_origin(arg) is List and any(
-            resolve_list(self, a) for a in get_args(arg)
-        ):
+        if get_origin(arg) is List and resolve_list(self, arg):
             print("yes")
             return True
         resolved = resolve_basic_typehint(self, arg)
