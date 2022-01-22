@@ -1,10 +1,18 @@
 import functools
 from inspect import _empty, signature, ismethod
-from typing import Sequence, Union, List
+from typing import Sequence, Union, List, get_origin, get_args
 
 from .errors import (
     DuplicateAlias,
     DuplicateName,
+)
+from .conversions import (
+    not_needed,
+    to_int,
+    to_float,
+    resolve_list,
+    resolve_union,
+    resolve_basic_typehint,
 )
 
 
@@ -28,33 +36,12 @@ class CommandParameter:
         self.default = default
 
     def resolve_typehint(self) -> None:
-        resolved = self.resolve_basic_typehint()
+        resolved = resolve_basic_typehint(self)
         if not resolved:
-            if self.type is Union:
-                ...
-            elif self.type in {List, list}:
-                print(self.type)
-
-    def resolve_basic_typehint(self) -> bool:
-        if self.type in (_empty, str, type(None)):
-            return True
-        elif self.type is int:
-            try:
-                self.input = int(self.input)
-            except ValueError:
-                try:
-                    self.input = int(float(self.input))
-                except ValueError:
-                    return True
-            return True
-        elif self.type is float:
-            try:
-                self.input = float(self.input)
-            except ValueError:
-                return True
-            return True
-        else:
-            return False
+            if get_origin(self.type) is Union:
+                resolve_union(self)
+            elif get_origin(self.type) is List:
+                resolve_list(self)
 
     def __repr__(self):
         return f"<{self.__class__.__name__} name={self.name}, type={self.type}, variable={self.variable}, optional={self.optional}, input={self.input}>"
