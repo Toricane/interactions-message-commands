@@ -70,7 +70,7 @@ def resolve_list(self, _arg=None):
     if get_origin(arg) is Union:
         if resolve_union(self, arg):
             return True
-    elif get_origin(arg) is List:
+    elif get_origin(arg) == list:
         print("resolve", [resolve_list(self, a) for a in get_args(args)])
         if any(resolve_list(self, a) for a in get_args(args)):
             return True
