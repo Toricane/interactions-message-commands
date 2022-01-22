@@ -71,7 +71,7 @@ def resolve_list(self, _arg=None):
         if resolve_union(self, arg):
             return True
     elif get_origin(arg) is List:
-        if resolve_list(self, arg):
+        if resolve_list(self, get_args(arg)):
             return True
     else:
         return resolve_basic_typehint(self, arg)
