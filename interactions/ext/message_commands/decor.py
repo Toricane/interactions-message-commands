@@ -1,6 +1,6 @@
 import functools
 from inspect import _empty, signature, ismethod
-from typing import Sequence
+from typing import Sequence, Union, List
 
 from .errors import (
     DuplicateAlias,
@@ -28,8 +28,16 @@ class CommandParameter:
         self.default = default
 
     def resolve_typehint(self) -> None:
+        resolved = self.resolve_basic_typehint()
+        if not resolved:
+            if self.type is Union:
+                ...
+            elif self.type in {List, list}:
+                print(self.type)
+
+    def resolve_basic_typehint(self) -> bool:
         if self.type in (_empty, str, type(None)):
-            return
+            return True
         elif self.type is int:
             try:
                 self.input = int(self.input)
@@ -37,12 +45,16 @@ class CommandParameter:
                 try:
                     self.input = int(float(self.input))
                 except ValueError:
-                    return
+                    return True
+            return True
         elif self.type is float:
             try:
                 self.input = float(self.input)
             except ValueError:
-                return
+                return True
+            return True
+        else:
+            return False
 
     def __repr__(self):
         return f"<{self.__class__.__name__} name={self.name}, type={self.type}, variable={self.variable}, optional={self.optional}, input={self.input}>"
