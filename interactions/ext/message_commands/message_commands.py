@@ -31,7 +31,7 @@ class MessageCommands(Extension):
 
         # if the prefix is a coroutine, run it
         if iscoroutinefunction(self.bot.prefix):
-            ctx: MessageContext = self.create_context(msg)
+            ctx: MessageContext = await self.create_context(msg)
             prefix: str = await self.bot.prefix(ctx)
 
             if msg.content.startswith(prefix):
@@ -71,7 +71,7 @@ class MessageCommands(Extension):
             return
 
         # get required data for MessageContext
-        ctx: MessageContext = self.create_context(msg) if not context else context
+        ctx: MessageContext = await self.create_context(msg) if not context else context
         func: callable = self.bot.message_commands[
             content[0]
         ]  # get the corresponding function
