@@ -101,6 +101,7 @@ class MessageCommands(Extension):
             param
             for _, param in params.items()
             if param.kind in {param.POSITIONAL_ONLY, param.POSITIONAL_OR_KEYWORD}
+            and not param.optional
         ]
 
         # raises if there are not enough parameters
