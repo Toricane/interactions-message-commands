@@ -55,7 +55,7 @@ def resolve_list(self, _arg=None):
         if resolve_list(self, arg):
             return True
     else:
-        ...
+        return resolve_basic_typehint(self, arg)
     return False
 
 
@@ -64,6 +64,8 @@ def resolve_union(self, _type=None):
     if not args:
         return False
     for arg in args:
+        if get_origin(arg) is List and resolve_list(self, arg):
+            return True
         resolved = resolve_basic_typehint(self, arg)
         if resolved:
             return True
