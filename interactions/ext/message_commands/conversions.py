@@ -72,7 +72,7 @@ def resolve_list(self, _arg=None):
             return True
     elif get_origin(arg) == list:
         print("resolve", [resolve_list(self, a) for a in get_args(arg)])
-        if any(resolve_list(self, a) for a in get_args(args)):
+        if any(resolve_list(self, a) for a in get_args(arg)):
             return True
     else:
         return resolve_basic_typehint(self, arg)
