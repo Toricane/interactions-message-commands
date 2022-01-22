@@ -83,7 +83,8 @@ def resolve_union(self, _type=None):
     if not args:
         return False
     self.input = split(self.input) if len(split(self.input)) > 1 else list(self.input)
-    print(self.input)
+    print("input", self.input)
+    print("args", args)
     for arg in args:
         if get_origin(arg) is List and any(
             resolve_list(self, a) for a in get_args(arg)
