@@ -83,7 +83,7 @@ def resolve_union(self, _type=None):
     args = get_args(self.type) if _type is None else get_args(_type)
     if not args:
         return False
-    input = split(self.input) if len(split(self.input)) > 1 else list(self.input)
+    self.input = split(self.input) if len(split(self.input)) > 1 else list(self.input)
     print("input", input)
     print("args", args)
     for arg in args:
