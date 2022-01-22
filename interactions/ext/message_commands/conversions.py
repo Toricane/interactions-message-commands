@@ -15,7 +15,7 @@ def to_int(self):
                 self.input[self.input.index(i)] = int(i)
             except ValueError:
                 try:
-                    self.input[self.input.index(i)] = int(float(self.input))
+                    self.input[self.input.index(i)] = int(float(i))
                 except ValueError:
                     return False
     else:
