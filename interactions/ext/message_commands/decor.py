@@ -28,7 +28,6 @@ class CommandParameter:
         self.default = default
 
     def resolve_typehint(self) -> None:
-        print(f"{self.type=}")
         if self.type in (_empty, str, type(None)):
             return
         elif self.type is int:
