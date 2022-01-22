@@ -83,7 +83,7 @@ class MessageCommands(Extension):
         # add user input to parameters
         needed_params = {}
         for cmd_param, c in zip(cmd_params, content[1:]):
-            if cmd_param.input in {None, _empty} or cmd_param.input and c:
+            if cmd_param.default in {None, _empty} or cmd_param.default and c:
                 if cmd_param.variable.kind in {
                     cmd_param.variable.VAR_POSITIONAL,
                     cmd_param.variable.KEYWORD_ONLY,
