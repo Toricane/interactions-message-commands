@@ -86,7 +86,7 @@ def resolve_union(self, _type=None):
     self.input = split(self.input) if len(split(self.input)) > 1 else list(self.input)
     print("input", self.input)
     print("args", args)
-    print(f"{get_origin(args[0])}??")
+    print(f"{get_origin(args[0]) == list}??")
     for arg in args:
         if get_origin(arg) == list and resolve_list(self, arg):
             print("yes")
