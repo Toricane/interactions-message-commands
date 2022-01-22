@@ -29,9 +29,9 @@ class CommandParameter:
 
     def resolve_typehint(self) -> None:
         print(f"{self.type=}")
-        if isinstance(self.type, (_empty, str, type(None))):
+        if self.type in (_empty, str, type(None)):
             return
-        elif isinstance(self.type, int):
+        elif self.type is int:
             try:
                 self.input = int(self.input)
             except ValueError:
@@ -39,7 +39,7 @@ class CommandParameter:
                     self.input = int(float(self.input))
                 except ValueError:
                     return
-        elif isinstance(self.type, float):
+        elif self.type is float:
             try:
                 self.input = float(self.input)
             except ValueError:
