@@ -47,12 +47,12 @@ def to_float(self):
 def resolve_basic_typehint(self, _type=None) -> bool:
     if _type is None:
         _type = self.type
-    if not_needed(self):
-        return True
-    elif _type is int:
+    if _type is int:
         to_int(self)
     elif _type is float:
         to_float(self)
+    elif not_needed(self):
+        return True
     else:
         return False
     return True
