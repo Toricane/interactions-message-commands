@@ -22,6 +22,7 @@ class MessageCommands(Extension):
         self.bot.event(self.process, "on_message_create")
 
     async def process(self, msg) -> None:
+        # sourcery skip: remove-unnecessary-else
         """Processes a message and runs the corresponding command if it matches the prefix"""
         # if no prefix, error
         if not self.bot.prefix:
@@ -29,8 +30,8 @@ class MessageCommands(Extension):
 
         # if the prefix is a coroutine, run it
         if iscoroutinefunction(self.bot.prefix):
-            ctx = self.create_context(msg)
-            prefix = await self.bot.prefix(ctx)
+            ctx: MessageContext = self.create_context(msg)
+            prefix: str = await self.bot.prefix(ctx)
 
             if msg.content.startswith(prefix):
                 await self.logic(msg, prefix, context=ctx)
@@ -44,7 +45,7 @@ class MessageCommands(Extension):
         # see if the message starts with the prefix, and execute self.logic()
         if isinstance(self.bot.prefix, str) and msg.content.startswith(self.bot.prefix):
             return await self.logic(msg, self.bot.prefix)
-        elif isinstance(self.bot.prefix, (tuple, list, set)):
+        else:
             for prefix in self.bot.prefix:
                 if msg.content.startswith(prefix):
                     return await self.logic(msg, prefix)
@@ -69,7 +70,7 @@ class MessageCommands(Extension):
             return
 
         # get required data for MessageContext
-        ctx = self.create_context(msg) if not context else context
+        ctx: MessageContext = self.create_context(msg) if not context else context
         func: callable = self.bot.message_commands[
             content[0]
         ]  # get the corresponding function
