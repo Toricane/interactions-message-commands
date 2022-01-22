@@ -27,6 +27,23 @@ class CommandParameter:
         self.input = input
         self.default = default
 
+    def resolve_typehint(self) -> None:
+        if isinstance(self.type, (_empty, str, type(None))):
+            return
+        elif isinstance(self.type, int):
+            try:
+                self.input = int(self.input)
+            except ValueError:
+                try:
+                    self.input = int(float(self.input))
+                except ValueError:
+                    return
+        elif isinstance(self.type, float):
+            try:
+                self.input = float(self.input)
+            except ValueError:
+                return
+
     def __repr__(self):
         return f"<{self.__class__.__name__} name={self.name}, type={self.type}, variable={self.variable}, optional={self.optional}, input={self.input}>"
 

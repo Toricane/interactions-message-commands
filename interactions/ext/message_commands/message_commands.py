@@ -1,13 +1,14 @@
-from inspect import _empty, iscoroutinefunction
+from inspect import _empty, iscoroutinefunction, Parameter
 from interactions import Client, Extension, Message
 from shlex import split
-from typing import List, Optional, Union, Sequence, Coroutine
+from typing import List, Optional, Union, Sequence, Coroutine, Dict
 
 from .errors import (
     MissingRequiredArgument,
     NoPrefixProvided,
 )
 from .context import MessageContext
+from .decor import CommandParameter
 
 
 class MessageCommands(Extension):
@@ -76,8 +77,8 @@ class MessageCommands(Extension):
         ]  # get the corresponding function
 
         # get the saved parameters of the function
-        params = func.__params__
-        cmd_params = func.__cmd_params__
+        params: Dict[str, Parameter] = func.__params__
+        cmd_params: List[CommandParameter] = func.__cmd_params__
 
         # add user input to parameters
         needed_params = {}
@@ -92,6 +93,7 @@ class MessageCommands(Extension):
                     cmd_param.input = " ".join(_args)
                 else:
                     cmd_param.input = c
+            cmd_param.resolve_typehint()
             needed_params[cmd_param.name] = cmd_param.input
 
         # get the required number of parameters in the function
