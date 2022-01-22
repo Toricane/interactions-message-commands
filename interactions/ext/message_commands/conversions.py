@@ -47,6 +47,7 @@ def to_float(self):
 def resolve_basic_typehint(self, _type=None) -> bool:
     if _type is None:
         _type = self.type
+
     if _type is int:
         to_int(self)
     elif _type is float:
@@ -83,7 +84,9 @@ def resolve_union(self, _type=None):
         return False
     self.input = split(self.input) if len(split(self.input)) > 1 else list(self.input)
     for arg in args:
-        if get_origin(arg) is List and resolve_list(self, arg):
+        if get_origin(arg) is List and any(
+            resolve_list(self, a) for a in get_args(arg)
+        ):
             return True
         resolved = resolve_basic_typehint(self, arg)
         if resolved:
